@@ -20,8 +20,10 @@ public class Server {
 
     //在线人数
     private static int onlineNum = 0;
-    //所有回话的容器
-    private CopyOnWriteArraySet<Server> copyOnWriteArraySet = new CopyOnWriteArraySet<>();
+    /**
+     * 所有回话的容器
+     */
+    private static CopyOnWriteArraySet<Server> copyOnWriteArraySet = new CopyOnWriteArraySet<>();
     //当前socketsession
     private Session session;
     //当前httpsession
@@ -38,7 +40,7 @@ public class Server {
      * @param config
      */
     @OnOpen
-    private void onOpen(Session session, EndpointConfig config){
+    public void onOpen(Session session, EndpointConfig config){
         this.session = session;
         copyOnWriteArraySet.add(this);//加入set集合
         Server.onlineNum++;//在线人数加
@@ -53,7 +55,7 @@ public class Server {
      * 关闭连接
      */
     @OnClose
-    private void onClose(){
+    public void onClose(){
         copyOnWriteArraySet.remove(this);
         Server.onlineNum--;
         list.remove(httpSession.getId());
@@ -63,12 +65,12 @@ public class Server {
     }
 
     @OnMessage
-    private void onMessage(String _message){
+    public void onMessage(String _message){
         JSONObject chat = JSON.parseObject(_message);
         JSONObject message = JSONObject.parseObject(chat.getString("message"));
         //to为空则为广播，否则为针对指定的用户发送
         if (message.get("to") == null || message.get("to").equals("")){
-            broadcast(_message);
+              broadcast(_message);
         }else{
             String[] userlist = message.get("to").toString().split(",");
             for (String s : userlist) {
@@ -76,6 +78,10 @@ public class Server {
             }
         }
     }
+
+    @OnError
+    public void onError(Throwable error){
+        error.printStackTrace();}
 
     /**
      * 发送消息

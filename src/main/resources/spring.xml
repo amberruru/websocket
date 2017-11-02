@@ -12,6 +12,10 @@
     <!-- 开启注解模式 -->
     <mvc:annotation-driven/>
 
+
+
+    <mvc:resources mapping="/static/**" location="/static/"/>
+
     <!--注解controller，service-->
     <context:component-scan base-package="com.socket.websocket.*" >
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
